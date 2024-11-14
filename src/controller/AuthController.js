@@ -1,17 +1,17 @@
 const User = require("../model/userModel");
-const bcrypt = require("bcrypt"); 
+const bcrypt = require("bcrypt");
 
 //randdom string genartor 
 
 let genarateToken = () => {
-  const length = 10 ; 
-  const characters = 'ABCEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let token = '';
-  for (let i = 0; i < length; i++) {
-    const randomIndex = Math.floor(Math.random() * characters.length);
-    token += characters.charAt(randomIndex);
-  }
-  return token;
+    const length = 10;
+    const characters = 'ABCEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let token = '';
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        token += characters.charAt(randomIndex);
+    }
+    return token;
 }
 
 const Register = async (req, res) => {
@@ -32,13 +32,13 @@ const Register = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ name, email, password: hashedPassword , token: genarateToken()});
+        const newUser = new User({ name, email, password: hashedPassword, token: genarateToken() });
         await newUser.save();
 
-        res.status(201).send({ token: newUser.token});
+        res.status(201).send({ token: newUser.token });
         console.log("New user registered successfully:", newUser);
 
-        
+
     } catch (error) {
         console.error("Error during registration:", error);
         res.status(500).send({ message: "Internal Server Error" });
@@ -65,7 +65,7 @@ const Login = async (req, res) => {
             return res.status(401).send({ message: "Incorrect password." });
         }
 
-        const token = genarateToken(); 
+        const token = genarateToken();
         user.token = token;
         await user.save();
 
@@ -80,16 +80,16 @@ const Login = async (req, res) => {
     }
 };
 
-const Logout = async (req, res ) => {
-  const uid = req.headers.uid;
-  const user = await User.findOne({ uid }); 
-  if (!user) {
-    return res.status(401).send({ message: "Unauthorized" });
-  }else{
-    user.token = "";
-    user.save();
-    return res.status(200).send({ message: "Logged out successfully" });
-  }
+const Logout = async (req, res) => {
+    const uid = req.headers.uid;
+    const user = await User.findOne({ uid });
+    if (!user) {
+        return res.status(401).send({ message: "Unauthorized" });
+    } else {
+        user.token = "";
+        user.save();
+        return res.status(200).send({ message: "Logged out successfully" });
+    }
 }
 
 let sessionVarifier = (req, res, next) => {
@@ -97,11 +97,11 @@ let sessionVarifier = (req, res, next) => {
     if (!token) {
         return res.status(401).send({ message: "Unauthorized" });
     }
-    const user =  User.findOne({ token });
+    const user = User.findOne({ token });
     if (!user) {
         return res.status(401).send({ message: "Unauthorized" });
     }
     req.user = user;
     next();
 };
-module.exports = { Register, Login  , Logout};
+module.exports = { Register, Login, Logout };
