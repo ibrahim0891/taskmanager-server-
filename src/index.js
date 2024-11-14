@@ -17,7 +17,7 @@ app.use(express.json());
 const dbUrl = process.env.DB_URL;
 
 mongoose.connect(dbUrl).then((result) => {
-    console.log("Connected to database");
+    console.log("Connected to database"); 
 }).catch((err) => {
     console.log(err);
 });
@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
 
 //testing branch 
 
-const port = process.env.PORT || 3004;
+const port = process.env.PORT || 3003;
 
 app.listen(port, () => {
     console.log(`App is listening on port ${port}`);
