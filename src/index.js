@@ -14,9 +14,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // database.connectDB();
-const dbUrlCloud = "mongodb+srv://mdrezuanislamridoy:RRRidoy781@rrcluster.dzwno.mongodb.net/TaskManager?retryWrites=true&w=majority"
-const dbUrlLocal = "mongodb://localhost:27017"
-mongoose.connect(dbUrlCloud).then((result) => {
+const dbUrl = process.env.DB_URL;
+
+mongoose.connect(dbUrl).then((result) => {
   console.log("Connected to database");
 }).catch((err) => {
   console.log(err);
