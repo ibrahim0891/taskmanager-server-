@@ -12,14 +12,14 @@ const UserRouter = require("./routes/UserRoutes");
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
- 
+
 
 const dbUrl = process.env.DB_URL;
 
 mongoose.connect(dbUrl).then((result) => {
     console.log("Connected to database");
 }).catch((err) => {
-    console.log(err); 
+    console.log(err);
 });
 
 app.use("/api/user", AuthRoute);
