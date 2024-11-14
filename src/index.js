@@ -8,31 +8,36 @@ const todoRoutes = require("./routes/todoRoutes");
 const database = require("./config/db");
 const { default: mongoose } = require("mongoose");
 const UserRouter = require("./routes/UserRoutes");
+const ProfileRouters = require("./routes/ProfileRoutes");
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
- 
+
 const dbUrl = process.env.DB_URL;
 
-mongoose.connect(dbUrl).then((result) => {
+mongoose
+  .connect(dbUrl)
+  .then((result) => {
     console.log("Connected to database");
-}).catch((err) => {
+  })
+  .catch((err) => {
     console.log(err);
-});
+  });
 
 app.use("/api/user", AuthRoute);
 app.use("/api/todos", todoRoutes);
 app.use("/api/u", UserRouter);
+app.use("/api/profile", ProfileRouters);
 
 app.get("/", (req, res) => {
-    res.send("Hello");
+  res.send("Hello");
 });
 
-//testing branch 
+//testing branch
 
-const port = process.env.PORT || 3004;
+const port = process.env.PORT || 3003;
 
 app.listen(port, () => {
-    console.log(`App is listening on port ${port}`);
+  console.log(`App is listening on port ${port}`);
 });
