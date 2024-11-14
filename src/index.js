@@ -12,8 +12,7 @@ const UserRouter = require("./routes/UserRoutes");
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// database.connectDB();
+ 
 const dbUrl = process.env.DB_URL;
 
 mongoose.connect(dbUrl).then((result) => {
