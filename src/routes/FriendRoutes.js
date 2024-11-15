@@ -9,9 +9,9 @@ const {
 } = require("../controller/FriendController");
 
 FriendRoute.get("/", getUsers);
-FriendRoute.post("/:id", addFriends);
-FriendRoute.post("/:id", deleteFriend);
-FriendRoute.post("/:id", acceptReq);
-FriendRoute.post("/:id", cancelReq);
+FriendRoute.post("/addFriend/:id", addFriends);
+FriendRoute.post("/deleteFriend/:id", deleteFriend);
+FriendRoute.post("/acceptReq/:id", acceptReq);
+FriendRoute.post("/cancelReq/:id", cancelReq);
 
 module.exports = FriendRoute;
