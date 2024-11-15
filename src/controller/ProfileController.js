@@ -23,7 +23,7 @@ const updateProfile = async (req, res) => {
     if (newPass) updatedFields.password = await bcrypt.hash(newPass, 10);
 
     const user = await User.findOneAndUpdate(
-      { id: uid },
+      { _id: uid },
       { $set: updatedFields },
       { new: true }
     );
