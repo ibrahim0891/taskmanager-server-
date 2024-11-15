@@ -19,10 +19,9 @@ const userSchema = mongoose.Schema(
       type: String,
       required: false,
     },
-    friends: {
-      type: mongoose.schema.types.objectId,
-      ref: "User",
-    },
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    pendingFR: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    sentFR: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
 
   { timestamps: true }
