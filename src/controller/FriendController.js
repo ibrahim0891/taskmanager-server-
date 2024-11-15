@@ -35,7 +35,7 @@ const addFriends = async (req, res) => {
     await Me.save();
     await Friend.save();
 
-    await res.send(Me);
+    await res.send(Me, { FrStatus: "pending" });
   } catch (error) {
     console.log(error);
   }
@@ -67,6 +67,8 @@ const acceptReq = async (req, res) => {
 
     await Me.save();
     await Friend.save();
+
+    await res.send(Me, { FrStatus: "friends" });
   } catch (error) {
     console.log(error);
   }
@@ -95,6 +97,7 @@ const cancelReq = async (req, res) => {
 
     await Me.save();
     await Friend.save();
+    await res.send(Me, { FrStatus: "add friend" });
   } catch (error) {
     console.log(error);
   }
@@ -122,6 +125,7 @@ const deleteFriend = async (req, res) => {
 
     await Me.save();
     await Friend.save();
+    await res.send(Me, { FrStatus: "add friend" });
   } catch (error) {
     console.log(error);
   }
