@@ -12,16 +12,16 @@ const getUsers = async (req, res) => {
 };
 
 const addFriends = async (req, res) => {
-  const { id } = req.params;
-  const uid = req.headers["uid"];
-
   try {
-    const Me = await User.findOne({ _id: uid });
-    const Friend = await User.findOne({ _id: id });
+    const { id } = req.params;
+    const uid = req.headers["uid"];
 
     if (!uid || !id) {
       return res.send({ message: "UID and Friend ID are required" });
     }
+
+    const Me = await User.findOne({ _id: uid });
+    const Friend = await User.findOne({ _id: id });
 
     if (!Me || !Friend) {
       res.send("User not found");
@@ -45,6 +45,10 @@ const acceptReq = async (req, res) => {
   try {
     const { id } = req.params;
     const uid = req.headers["uid"];
+
+    if (!uid || !id) {
+      return res.send({ message: "UID and Friend ID are required" });
+    }
 
     const Me = await User.findOne({ _id: uid });
     const Friend = await User.findOne({ _id: id });
@@ -73,6 +77,10 @@ const cancelReq = async (req, res) => {
     const { id } = req.params;
     const uid = req.headers["uid"];
 
+    if (!uid || !id) {
+      return res.send({ message: "UID and Friend ID are required" });
+    }
+
     const Me = await User.findOne({ _id: uid });
     const Friend = await User.findOne({ _id: id });
 
@@ -96,6 +104,11 @@ const deleteFriend = async (req, res) => {
   try {
     const { id } = req.params;
     const uid = req.headers["uid"];
+
+    if (!uid || !id) {
+      return res.send({ message: "UID and Friend ID are required" });
+    }
+
     const Me = await User.deleteOne({ _id: uid });
     const Friend = await User.findOne({ _id: id });
 
