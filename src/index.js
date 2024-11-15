@@ -9,6 +9,7 @@ const database = require("./config/db");
 const { default: mongoose } = require("mongoose");
 const UserRouter = require("./routes/UserRoutes");
 const ProfileRouters = require("./routes/ProfileRoutes");
+const FriendRoute = require("./routes/FriendRoutes");
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
@@ -29,6 +30,7 @@ app.use("/api/user", AuthRoute);
 app.use("/api/todos", todoRoutes);
 app.use("/api/u", UserRouter);
 app.use("/api/profile", ProfileRouters);
+app.use("/api/friends", FriendRoute);
 
 app.get("/", (req, res) => {
   res.send("Hello");
