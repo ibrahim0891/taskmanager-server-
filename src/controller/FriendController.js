@@ -2,8 +2,8 @@ const User = require("../model/userModel");
 
 const getUsers = async (req, res) => {
   try {
-    const uid = req.header["uid"];
-    const users = await User.find({ $ne: { uid } });
+    const uid = req.headers["uid"];
+    const users = await User.find({ _id: { $ne: uid } });
     if (!users) {
       return res.send("No User Found Insted of You");
     }
@@ -13,21 +13,105 @@ const getUsers = async (req, res) => {
 
 const addFriends = async (req, res) => {
   const { id } = req.params;
-  const uid = req.header["uid"];
+  const uid = req.headers["uid"];
 
-  const Me = User.findOne({ uid });
+  try {
+    const Me = await User.findOne({ _id: uid });
+    const Friend = await User.findOne({ _id: id });
+
+    if (!uid || !id) {
+      return res.send({ message: "UID and Friend ID are required" });
+    }
+
+    if (!Me || !Friend) {
+      res.send("User not found");
+    }
+
+    if (!Me.pendingFR.includes(id)) {
+      Me.pendingFR.push(id);
+      Friend.sentFR.push(uid);
+    }
+
+    await Me.save();
+    await Friend.save();
+
+    await res.send(Me);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const acceptReq = async (req, res) => {
-  const { id } = req.params;
-  const uid = req.header["uid"];
+  try {
+    const { id } = req.params;
+    const uid = req.headers["uid"];
+
+    const Me = await User.findOne({ _id: uid });
+    const Friend = await User.findOne({ _id: id });
+
+    if (!Me || !Friend) {
+      res.send("User not found");
+    }
+
+    Me.friends.push(Friend._id);
+    Friend.friends.push(Me._id);
+
+    Me.pendingFR = Me.pendingFR.filter((fr) => fr.toString() !== id);
+    Friend.sentFR = Me.sentFR.filter(
+      (fr) => fr.toString() !== Me._id.toString()
+    );
+
+    await Me.save();
+    await Friend.save();
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const cancelReq = async (req, res) => {
-  const { id } = req.params;
-  const uid = req.header["uid"];
+  try {
+    const { id } = req.params;
+    const uid = req.headers["uid"];
+
+    const Me = await User.findOne({ _id: uid });
+    const Friend = await User.findOne({ _id: id });
+
+    if (!Me || !Friend) {
+      res.send("User not found");
+    }
+
+    Me.pendingFR = Me.pendingFR.filter((fr) => fr.toString() !== id);
+    Friend.sentFR = Me.sentFR.filter(
+      (fr) => fr.toString() !== Me._id.toString()
+    );
+
+    await Me.save();
+    await Friend.save();
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-const deleteFriend = async (req, res) => {};
+const deleteFriend = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const uid = req.headers["uid"];
+    const Me = await User.deleteOne({ _id: uid });
+    const Friend = await User.findOne({ _id: id });
+
+    if (!Me || !Friend) {
+      res.send("User not found");
+    }
+    Me.friends = Me.friends.filter((fr) => fr.toString() !== id);
+    Friend.friends = Me.friends.filter(
+      (fr) => fr.toString() !== Me._id.toString()
+    );
+
+    await Me.save();
+    await Friend.save();
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 module.exports = { getUsers, addFriends, deleteFriend, acceptReq, cancelReq };

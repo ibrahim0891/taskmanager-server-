@@ -10,8 +10,8 @@ const {
 
 FriendRoute.get("/", getUsers);
 FriendRoute.post("/:id", addFriends);
-FriendRoute.delete("/:id", deleteFriend);
-FriendRoute.put("/:id", acceptReq);
-FriendRoute.put("/:id", cancelReq);
+FriendRoute.post("/:id", deleteFriend);
+FriendRoute.post("/:id", acceptReq);
+FriendRoute.post("/:id", cancelReq);
 
 module.exports = FriendRoute;
