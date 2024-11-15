@@ -7,8 +7,8 @@ const UserRouter = express.Router();
 
 
 
-UserRouter.get('/user/:uid', function(req, res) {
-    let uid = req.params.uid ;
+UserRouter.get('/user', function(req, res) {
+    let uid = req.headers.uid ;
     User.findOne({_id : uid}).then((user) => {
         res.send(user)
     })
