@@ -24,7 +24,7 @@ const addFriends = async (req, res) => {
     const Friend = await User.findOne({ _id: id });
 
     if (!Me || !Friend) {
-      res.send("User not found");
+      return res.send("User not found");
     }
 
     if (!Me.pendingFR.includes(id)) {
@@ -54,21 +54,21 @@ const acceptReq = async (req, res) => {
     const Friend = await User.findOne({ _id: id });
 
     if (!Me || !Friend) {
-      res.send("User not found");
+      return res.send("User not found");
     }
 
     Me.friends.push(Friend._id);
     Friend.friends.push(Me._id);
 
     Me.pendingFR = Me.pendingFR.filter((fr) => fr.toString() !== id);
-    Friend.sentFR = Me.sentFR.filter(
+    Friend.sentFR = Friend.sentFR.filter(
       (fr) => fr.toString() !== Me._id.toString()
     );
 
     await Me.save();
     await Friend.save();
 
-    await res.send(Me, { FrStatus: "friends" });
+    await res.send({ Me, FrStatus: "friends" });
   } catch (error) {
     console.log(error);
   }
@@ -87,7 +87,7 @@ const cancelReq = async (req, res) => {
     const Friend = await User.findOne({ _id: id });
 
     if (!Me || !Friend) {
-      res.send("User not found");
+      return res.send("User not found");
     }
 
     Me.pendingFR = Me.pendingFR.filter((fr) => fr.toString() !== id);
@@ -116,7 +116,7 @@ const deleteFriend = async (req, res) => {
     const Friend = await User.findOne({ _id: id });
 
     if (!Me || !Friend) {
-      res.send("User not found");
+      return res.send("User not found");
     }
     Me.friends = Me.friends.filter((fr) => fr.toString() !== id);
     Friend.friends = Me.friends.filter(
