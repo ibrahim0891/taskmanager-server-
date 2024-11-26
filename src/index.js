@@ -43,6 +43,7 @@ app.use("/api/todos", todoRoutes);
 app.use("/api/u", UserRouter);
 app.use("/api/profile", ProfileRouters);
 app.use("/api/friends", FriendRoute);
+app.use("/api/message", require("./routes/MessageRoutes"));
 
 
 
@@ -58,8 +59,14 @@ const io = socket(server, {
     }
 })
 
-io.on('connection', (socket) => {
-    console.log(socket.id);
+io.on('connection', (socket) => { 
+    socket.on('message', (data) => {  
+        socket.to(data.chatId).emit('feedBackMessage', data.input, data.senderId)
+    })
+    socket.on("join", (chatId) => {
+        console.log(socket.id + " has joined the room" + chatId);
+        socket.join(chatId)   
+    })
 })
 
 server.listen(port, () => {
