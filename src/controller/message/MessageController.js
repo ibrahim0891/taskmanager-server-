@@ -1,4 +1,4 @@
-const { Chat, Message } = require("../model/messageModel");
+const { Chat, Message } = require("../../model/messageModel");
 
 
 const messageController = {}
@@ -59,8 +59,8 @@ messageController.leaveChat = (req, res) => {
         })
 }
 
-messageController.loadAllChat = (req, res) => { 
-    const userId = req.headers.uid; 
+messageController.loadAllChat = (req, res) => {
+    const userId = req.headers.uid;
     Chat.find({ participants: userId })
         .populate("participants", "name").then((chats) => {
             res.status(200).send(chats);

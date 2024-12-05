@@ -7,11 +7,11 @@ const socket = require('socket.io')
 const { mongoose } = require("mongoose");
 
 //Routes 
-const AuthRoute = require("./routes/AuthRoutes");
-const todoRoutes = require("./routes/todoRoutes");
+const AuthRoute = require("./routes/auth/AuthRoutes");
+const todoRoutes = require("./routes/todo/todoRoutes");
 const UserRouter = require("./routes/UserRoutes");
-const ProfileRouters = require("./routes/ProfileRoutes");
-const FriendRoute = require("./routes/FriendRoutes");
+const ProfileRouters = require("./routes/profile/ProfileRoutes");
+const FriendRoute = require("./routes/friend/FriendRoutes");
 
 //Dependency Initialization
 require("dotenv").config();
@@ -43,7 +43,7 @@ app.use("/api/todos", todoRoutes);
 app.use("/api/u", UserRouter);
 app.use("/api/profile", ProfileRouters);
 app.use("/api/friends", FriendRoute);
-app.use("/api/message", require("./routes/MessageRoutes"));
+app.use("/api/message", require("./routes/message/MessageRoutes"));
 
 
 
@@ -59,13 +59,13 @@ const io = socket(server, {
     }
 })
 
-io.on('connection', (socket) => { 
-    socket.on('message', (data) => {  
+io.on('connection', (socket) => {
+    socket.on('message', (data) => {
         socket.to(data.chatId).emit('feedBackMessage', data.input, data.senderId)
     })
     socket.on("join", (chatId) => {
         console.log(socket.id + " has joined the room" + chatId);
-        socket.join(chatId)   
+        socket.join(chatId)
     })
 })
 

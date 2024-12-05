@@ -3,7 +3,7 @@
 
 const express = require("express");
 const MessageRouter = express.Router();
-const { createChat, sendMessageToPublicRoom, leaveChat, loadAllChat, getAllPublicRoom, joinPublicRoom, getChatMessages } = require("../controller/MessageController");
+const { createChat, sendMessageToPublicRoom, leaveChat, loadAllChat, getAllPublicRoom, joinPublicRoom, getChatMessages } = require("../../controller/message/MessageController");
 
 MessageRouter.post("/createChat", createChat);
 MessageRouter.post("/sendMessageToPublicRoom", sendMessageToPublicRoom);
