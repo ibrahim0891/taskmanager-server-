@@ -7,7 +7,7 @@ const {
     acceptReq,
     cancelReq,
     getFriends,
-} = require("../controller/FriendController");
+} = require("../../controller/friend/FriendController");
 
 FriendRoute.get("/", getUsers);
 FriendRoute.post("/addFriend/", addFriends);

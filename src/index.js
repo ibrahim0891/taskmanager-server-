@@ -9,7 +9,7 @@ const { mongoose } = require("mongoose");
 //Routes 
 const AuthRoute = require("./routes/auth/AuthRoutes");
 const todoRoutes = require("./routes/todo/todoRoutes");
-const UserRouter = require("./routes/UserRoutes");
+const UserRouter = require("./routes/profile/UserRoutes");
 const ProfileRouters = require("./routes/profile/ProfileRoutes");
 const FriendRoute = require("./routes/friend/FriendRoutes");
 
