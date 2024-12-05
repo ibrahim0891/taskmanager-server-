@@ -1,7 +1,7 @@
 const {
   getProfileData,
   updateProfile,
-} = require("../controller/ProfileController");
+} = require("../../controller/profile/ProfileController");
 
 const ProfileRoutes = require("express").Router();
 

@@ -1,6 +1,6 @@
 const express = require("express");
-const authenticateJWT = require("../controller/authenticateJWT");
-const TodoModel = require("../model/todoModel");
+const authenticateJWT = require("../../controller/auth/authenticateJWT");
+const TodoModel = require("../../model/todoModel");
 
 const todoRoutes = express.Router();
 

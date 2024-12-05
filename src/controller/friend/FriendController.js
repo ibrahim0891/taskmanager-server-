@@ -1,4 +1,4 @@
-const User = require("../model/userModel");
+const User = require("../../model/userModel");
 
 const getUsers = async (req, res) => {
     try {
@@ -6,7 +6,7 @@ const getUsers = async (req, res) => {
         console.log(uid);
         const users = await User.find({ _id: { $ne: uid } });
         if (!users) {
-            return res.send("No User Found Insted of You");
+            return res.send("No User Found Instead of You");
         }
         console.log(users);
         res.send(users);

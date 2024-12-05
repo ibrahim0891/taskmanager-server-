@@ -1,13 +1,13 @@
 const FriendRoute = require("express").Router();
 
 const {
-  getUsers,
-  addFriends,
-  deleteFriend,
-  acceptReq,
-  cancelReq,
-  getFriends,
-} = require("../controller/FriendController");
+    getUsers,
+    addFriends,
+    deleteFriend,
+    acceptReq,
+    cancelReq,
+    getFriends,
+} = require("../../controller/friend/FriendController");
 
 FriendRoute.get("/", getUsers);
 FriendRoute.post("/addFriend/", addFriends);
