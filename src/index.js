@@ -12,6 +12,7 @@ const todoRoutes = require("./routes/todo/todoRoutes");
 const UserRouter = require("./routes/profile/UserRoutes");
 const ProfileRouters = require("./routes/profile/ProfileRoutes");
 const FriendRoute = require("./routes/friend/FriendRoutes");
+const { Message, Chat } = require("./model/messageModel");
 
 //Dependency Initialization
 require("dotenv").config();
@@ -60,11 +61,28 @@ const io = socket(server, {
 })
 
 io.on('connection', (socket) => {
-    socket.on('message', (data) => {
-        socket.to(data.chatId).emit('feedBackMessage', data.input, data.senderId)
+    socket.on('message', async (data) => {
+        console.log(data
+        );
+        socket.to(data.chatId).emit('feedBackMessage', data.text, data.sender)
+        const message = new Message({
+            sender: data.sender,
+            chatId: data.chatId,
+            text: data.text
+        })
+        await message.save()
+
+        await Chat.findByIdAndUpdate(data.chatId, {
+            lastMessage: {
+                content: data.text,
+                timestamp: new Date(),
+                sender: data.sender._id, 
+                senderName : data.sender.name
+            }
+        })
     })
     socket.on("join", (chatId) => {
-        console.log(socket.id + " has joined the room" + chatId);
+        console.log(socket.id + " has joined the room " + chatId);
         socket.join(chatId)
     })
 })

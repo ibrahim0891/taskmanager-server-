@@ -19,6 +19,12 @@ const userSchema = mongoose.Schema(
             type: String,
             required: false,
         },
+        chats: [
+            {
+                type: mongoose.Schema.Types.ObjectId ,
+                ref : "Chat" 
+            }
+        ],
         friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
         pendingFR: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
         sentFR: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
