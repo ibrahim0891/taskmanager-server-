@@ -12,14 +12,31 @@ const messageSchema = new mongoose.Schema({
 
 
 const chatSchema = new mongoose.Schema({
-    name: { type: String, required: true },  // For group chats, chatroom name
+    name: { type: String },  // For group chats, chatroom name
     type: { type: String, enum: ["public", "group", "private"], required: true }, // Type of the chat
     participants: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],  // List of participants (users) in the chat
     createdAt: { type: Date, default: Date.now },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Creator of the group chat or public room
 });
 
-const Chat = mongoose.model("Chat", chatSchema);
+const privetChatSchema = new mongoose.Schema({
+    createdAt: { type: Date, default: Date.now },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Creator of the group chat or public room
+    lastMessage: {
+        content: String , 
+        timestamp : Date , 
+        sender: {
+            type: mongoose.Schema.Types.ObjectId , ref : "User"
+        },
+        senderName : String
+    }, 
+    members: [
+        {type: mongoose.Schema.Types.ObjectId , ref : "User"}
+    ]
+});
+
+
+const Chat = mongoose.model("Chat", privetChatSchema);
 const Message = mongoose.model("Message", messageSchema);
 
 module.exports = {Chat , Message}

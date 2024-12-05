@@ -1,28 +1,47 @@
 const { Chat, Message } = require("../../model/messageModel");
+const User = require("../../model/userModel");
 
 
 const messageController = {}
 
 
-messageController.createChat = (req, res) => {
-    const name = req.body.name;
-    const type = req.body.type;
-    const participants = req.body.participants;
-    const createdBy = req.body.createdBy;
-    const createdAt = new Date();
+messageController.createChat = async (req, res) => {
+    const senderId = req.headers.uid
+    const receiverId = req.body.uid
+
+    console.log(senderId, receiverId);
+
+    // Check if chat already exists between users
+    if (!senderId || !receiverId) {
+        res.status(400).send({ message: 'error' })
+        return
+    }
+    const existingChat = await Chat.findOne({
+        members: { $all: [senderId, receiverId] }
+    })
+
+    if (existingChat) {
+        return res.status(200).json(existingChat._id)
+    }
 
     const newChat = new Chat({
-        name,
-        type,
-        participants,
-        createdBy,
-        createdAt,
-    });
-    newChat.save().then((chat) => {
-        res.status(201).json(chat);
-    }).catch((err) => {
-        res.status(500).json({ error: err.message });
+        createdBy: senderId,
+        members: [senderId, receiverId]
     })
+
+    await newChat.save()
+        .then(chat => {
+            return Promise.all([
+                User.findByIdAndUpdate(senderId, { $push: { chats: chat._id } }),
+                User.findByIdAndUpdate(receiverId, { $push: { chats: chat._id } })
+            ])
+        })
+        .then(() => { 
+            res.send(newChat._id)
+        })
+        .catch(err => {
+            res.status(500).json({ error: err.message })
+        })
 }
 
 messageController.sendMessageToPublicRoom = (req, res) => {
@@ -59,15 +78,20 @@ messageController.leaveChat = (req, res) => {
         })
 }
 
-messageController.loadAllChat = (req, res) => {
+messageController.loadAllChat = async (req, res) => {
     const userId = req.headers.uid;
-    Chat.find({ participants: userId })
-        .populate("participants", "name").then((chats) => {
-            res.status(200).send(chats);
-        })
-        .catch((err) => {
-            res.status(500).send({ error: err.message });
-        })
+    const chats = await User.findOne({ _id: userId }).select({ chats: 1 }).populate({
+        path: 'chats',
+        populate: [{
+            path: 'createdBy',
+            select: 'name'
+        },
+        {
+            path: 'members',
+            select: 'name'
+        }]
+    })
+    res.json(chats)
 }
 messageController.getAllPublicRoom = (req, res) => {
     Chat.find({ type: "public" }).then((chats) => {
@@ -90,16 +114,43 @@ messageController.joinPublicRoom = (req, res) => {
 }
 
 messageController.getChatMessages = (req, res) => {
-    const chatId = req.headers.chatId;
-    Message.find({ chatId }).then((messages) => {
-        res.status(200).json(messages);
-    })
-        .catch((err) => {
-            res.status(500).json({ error: err.message });
+    const chatId = req.headers['chatid'];
+
+    if (!chatId) {
+        return res.status(400).json({ error: "Chat ID is required in the headers" });
+    }
+
+    console.log(`Fetching messages for chatId: ${chatId}`);
+
+    Message.find({ chatId }).populate('sender', 'name email')        .then((messages) => {
+            res.status(200).json(messages);
         })
-}
+        .catch((err) => {
+            console.error(`Error fetching messages for chatId ${chatId}: ${err.message}`);
+            res.status(500).json({ error: err.message });
+        });
+};
 
+messageController.getChatInfo = async (req, res) => {
+    const chatID = req.headers.chatid; // Headers are case-insensitive, prefer lowercase
 
+    if (!chatID) {
+        return res.status(400).json({ error: "Chat ID is required in the headers" });
+    }
 
+    try {
+        console.log(`Fetching chat info for chatID: ${chatID}`);
+        const chat = await Chat.findById(chatID).populate('members', 'name email'); // Correct method is `findById`
+
+        if (!chat) {
+            return res.status(404).json({ error: "Chat not found" });
+        }
+
+        res.status(200).json(chat);
+    } catch (error) {
+        console.error(`Error fetching chat info for chatID ${chatID}: ${error.message}`);
+        res.status(500).json({ error: error.message });
+    }
+};
 
 module.exports = messageController;

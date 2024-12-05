@@ -9,3 +9,4 @@ ProfileRoutes.get("/", getProfileData);
 ProfileRoutes.put("/", updateProfile);
 
 module.exports = ProfileRoutes;
+  
